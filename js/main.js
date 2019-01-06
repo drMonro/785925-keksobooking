@@ -66,7 +66,7 @@ var generateApartment = function (amount, titles, topXmin, topXmax, topYmin, top
       checkout: checkPoints[getRandomIntFromRange(0, checkPoints.length - 1)],
       features: generateRandomFeatures(houseFeatures),
       description: '',
-      photos: shuffle(housePhotos),
+      photos: shuffleArray(housePhotos),
     },
     location: {
       x: getRandomIntFromRange(topXmin, topXmax),
@@ -76,7 +76,8 @@ var generateApartment = function (amount, titles, topXmin, topXmax, topYmin, top
 };
 
 var generateAvatarLink = function (amount) {
-  return (amount > 8) ? 'img/avatars/user' + ++amount + '.png' : 'img/avatars/user0' + ++amount + '.png';
+  var DECADE = 8;
+  return (amount > DECADE) ? 'img/avatars/user' + ++amount + '.png' : 'img/avatars/user0' + ++amount + '.png';
 };
 
 var getAndRemoveRandomTitle = function (array) {
@@ -104,7 +105,7 @@ var generateRandomFeatures = function (arr) {
   return newArr;
 };
 
-var shuffle = function (array) {
+var shuffleArray = function (array) {
   var currentIndex = array.length;
   var temporaryValue;
   var randomIndex;
@@ -118,8 +119,8 @@ var shuffle = function (array) {
   return array;
 };
 
-var showMap = function (hiddenBlock) {
-  var setupDialog = document.querySelector(hiddenBlock);
+var showMap = function () {
+  var setupDialog = document.querySelector('.map');
   setupDialog.classList.remove('map--faded');
 };
 
@@ -197,7 +198,7 @@ for (var i = 0; i < APARTMENTS_AMOUNT; i++) {
   APARTMENTS.push(generateApartment(i, OFFER_TITLES, AVATAR_COORDINATE_X_MIN, AVATAR__COORDINATE_X_MAX, AVATAR__COORDINATE_Y_MIN, AVATAR__COORDINATE_Y_MAX, APARTMENT_PRICE_MIN, APARTMENT_PRICE_MAX, APARTMENT_TYPES, ROOMS_AMOUNT_MIN, ROOMS_AMOUNT_MAX, GUESTS_AMOUNT_MIN, GUESTS_AMOUNT_MAX, CHECK_POINTS, APARTMENT_FEATURES, APARTMENT_PHOTOS));
 }
 
-showMap('.map');
+showMap();
 
 var fragmentPin = document.createDocumentFragment();
 var similarPinElement = document.querySelector('.map__pins');
