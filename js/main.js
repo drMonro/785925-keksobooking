@@ -11,6 +11,8 @@ var ROOMS_AMOUNT_MIN = 1;
 var ROOMS_AMOUNT_MAX = 5;
 var GUESTS_AMOUNT_MIN = 2;
 var GUESTS_AMOUNT_MAX = 7;
+var COORDINATE_SHIFT_X = 31;
+var COORDINATE_SHIFT_Y = 44;
 var OFFER_TITLES = [
   'Большая уютная квартира',
   'Маленькая неуютная квартира',
@@ -47,58 +49,73 @@ var APARTMENT_PHOTOS = [
 ];
 var PICTURE_WIDTH = 40;
 var PICTURE_HEIGHT = 40;
+var AVATAR_LINKS = [];
 var APARTMENTS = [];
 
 
-var generateApartment = function (amount, titles, topXmin, topXmax, topYmin, topYmax, minPrice, maxPrice, housingTypes, minRoomCount, maxRoomCount, minGuestsCount, maxGuestsCount, checkPoints, houseFeatures, housePhotos) {
+var generateApartment = function (avatars, titles, topXmin, topXmax, topYmin, topYmax, minPrice, maxPrice, housingTypes, minRoomCount, maxRoomCount, minGuestsCount, maxGuestsCount, checkPoints, houseFeatures, housePhotos) {
   return {
     author: {
-      avatar: generateAvatarLink(amount),
+      avatar: getAndRemoveRandomElement(avatars),
     },
     offer: {
-      title: getAndRemoveRandomTitle(titles),
-      address: getRandomIntFromRange(topXmin, topXmax) + ', ' + getRandomIntFromRange(topYmin, topYmax),
-      price: getRandomIntFromRange(minPrice, maxPrice),
-      type: housingTypes[getRandomIntFromRange(0, housingTypes.length - 1)],
-      rooms: getRandomIntFromRange(minRoomCount, maxRoomCount),
-      guests: getRandomIntFromRange(minGuestsCount, maxGuestsCount),
-      checkin: checkPoints[getRandomIntFromRange(0, checkPoints.length - 1)],
-      checkout: checkPoints[getRandomIntFromRange(0, checkPoints.length - 1)],
+      title: getAndRemoveRandomElement(titles),
+      address: getRandomIntegerFromRange(topXmin, topXmax) + ', ' + getRandomIntegerFromRange(topYmin, topYmax),
+      price: getRandomIntegerFromRange(minPrice, maxPrice),
+      type: housingTypes[getRandomIntegerFromRange(0, housingTypes.length - 1)],
+      rooms: getRandomIntegerFromRange(minRoomCount, maxRoomCount),
+      guests: getRandomIntegerFromRange(minGuestsCount, maxGuestsCount),
+      checkin: checkPoints[getRandomIntegerFromRange(0, checkPoints.length - 1)],
+      checkout: checkPoints[getRandomIntegerFromRange(0, checkPoints.length - 1)],
       features: generateRandomFeatures(houseFeatures),
       description: '',
       photos: shuffleArray(housePhotos),
     },
     location: {
-      x: getRandomIntFromRange(topXmin, topXmax),
-      y: getRandomIntFromRange(topYmin, topYmax),
+      x: getRandomIntegerFromRange(topXmin, topXmax),
+      y: getRandomIntegerFromRange(topYmin, topYmax),
     },
   };
 };
 
-var generateAvatarLink = function (amount) {
-  var DECADE = 8;
-  return (amount > DECADE) ? 'img/avatars/user' + ++amount + '.png' : 'img/avatars/user0' + ++amount + '.png';
-};
+function generateAvatarLinks(avatarLinks, linksCount) {
+  for (var i = 1; i <= linksCount; i++) {
+    var link = 'img/avatars/user' + leadingZeroes(i, 2) + '.png';
+    avatarLinks.push(link);
+  }
 
-var getAndRemoveRandomTitle = function (array) {
-  var indexRandom = getRandomIntFromRange(0, array.length - 1);
-  var titleRandom = array[indexRandom];
+  return avatarLinks;
+}
+
+function leadingZeroes(number, length) {
+  var link = '' + number;
+
+  while (link.length < length) {
+    link = '0' + link;
+  }
+
+  return link;
+}
+
+var getAndRemoveRandomElement = function (array) {
+  var indexRandom = getRandomIntegerFromRange(0, array.length - 1);
+  var elementRandom = array[indexRandom];
   array.splice(indexRandom, 1);
 
-  return titleRandom;
+  return elementRandom;
 };
 
-var getRandomIntFromRange = function (min, max) {
+var getRandomIntegerFromRange = function (min, max) {
   return Math.floor(min + Math.random() * (max + 1 - min));
 };
 
 var generateRandomFeatures = function (arr) {
   var newArr = [];
   var cloneArr = arr.slice(0);
-  var randomArrLength = getRandomIntFromRange(1, arr.length);
+  var randomArrLength = getRandomIntegerFromRange(1, arr.length);
 
   for (var i = 0; i < randomArrLength; i++) {
-    var randomIndex = getRandomIntFromRange(0, cloneArr.length - 1);
+    var randomIndex = getRandomIntegerFromRange(0, cloneArr.length - 1);
     newArr.push(cloneArr[randomIndex]);
     cloneArr.splice(randomIndex, 1);
   }
@@ -110,7 +127,7 @@ var shuffleArray = function (array) {
   var temporaryValue;
   var randomIndex;
   while (currentIndex !== 0) {
-    randomIndex = Math.floor(Math.random() * currentIndex);
+    randomIndex = getRandomIntegerFromRange(0, array.length - 1);
     currentIndex -= 1;
     temporaryValue = array[currentIndex];
     array[currentIndex] = array[randomIndex];
@@ -194,31 +211,106 @@ var getOfferTypeInRussian = function (type) {
 };
 
 
+var addDisabledAttribute = function (selector) {
+  var elementDisabled = document.querySelectorAll(selector);
+  for (var i = 0; i < elementDisabled.length; i++) {
+    elementDisabled[i].disabled = true;
+  }
+
+  return elementDisabled;
+};
+
+var removeDisabledAttribute = function (selector) {
+  var elementEnabled = document.querySelectorAll(selector);
+  for (var i = 0; i < elementEnabled.length; i++) {
+    elementEnabled[i].disabled = false;
+  }
+  return elementEnabled;
+};
+
+var calculateMainPinCoordinate = function (mainPin) {
+  var coordinates = {};
+  coordinates.x = Math.round(mainPin.offsetLeft + COORDINATE_SHIFT_X);
+  coordinates.y = Math.round(mainPin.offsetTop + COORDINATE_SHIFT_Y);
+  return coordinates;
+};
+
+var writeCoordinateToAddressField = function (mainPin) {
+  var addressField = document.getElementById('address');
+  addressField.value = calculateMainPinCoordinate(mainPin).x + ', ' + calculateMainPinCoordinate(mainPin).y;
+  return addressField;
+};
+
+var removeClass = function (selector, removableClass) {
+  var element = document.querySelector(selector);
+  element.classList.remove(removableClass);
+  return element;
+};
+
+var switchToActiveMode = function () {
+  var mapPin = document.querySelector('.map__pin--main');
+
+  showMap();
+  removeClass('.ad-form', 'ad-form--disabled');
+  removeDisabledAttribute('.ad-form-header');
+  removeDisabledAttribute('.ad-form__element');
+  removeDisabledAttribute('.map__filter');
+  removeDisabledAttribute('.map__features');
+  mapPin.removeEventListener('mouseup', switchToActiveMode);
+
+  var fragmentPin = document.createDocumentFragment();
+  var similarPinElement = document.querySelector('.map__pins');
+
+  for (var j = 0; j < APARTMENTS.length; j++) {
+    fragmentPin.appendChild(generatePinImage(APARTMENTS[j], PICTURE_WIDTH, PICTURE_HEIGHT));
+  }
+  similarPinElement.appendChild(fragmentPin);
+
+
+  // Создаю массив со всеми пинами
+  var popupOpenPins = document.querySelectorAll('.map__pin');
+
+  // Навешиваю обработчик на каждый элемент массива.
+  // Здесь у меня видимо проавал в теории - грызу https://learn.javascript.ru/events-and-interfaces
+  for (var k = 0; k < popupOpenPins.length; k++) {
+    popupOpenPins[k].addEventListener('click', showCheckedPopup(APARTMENTS[k]));
+  }
+};
+
+var showCheckedPopup = function (focusedApartment) {
+
+  var fragmentPopup = document.createDocumentFragment();
+  var MapTemplate = document.querySelector('.map');
+
+  fragmentPopup.appendChild(generatePopupFragment(focusedApartment));
+  MapTemplate.appendChild(fragmentPopup);
+
+
+  var popupFeaturesElement = document.querySelector('.popup__features');
+  popupFeaturesElement.appendChild(generateFeaturesFragment(focusedApartment));
+
+  var popupElement = document.querySelector('.popup__photos');
+  popupElement.appendChild(generatePhotosFragment(focusedApartment));
+};
+
+
+generateAvatarLinks(AVATAR_LINKS, APARTMENTS_AMOUNT);
+
 for (var i = 0; i < APARTMENTS_AMOUNT; i++) {
-  APARTMENTS.push(generateApartment(i, OFFER_TITLES, AVATAR_COORDINATE_X_MIN, AVATAR__COORDINATE_X_MAX, AVATAR__COORDINATE_Y_MIN, AVATAR__COORDINATE_Y_MAX, APARTMENT_PRICE_MIN, APARTMENT_PRICE_MAX, APARTMENT_TYPES, ROOMS_AMOUNT_MIN, ROOMS_AMOUNT_MAX, GUESTS_AMOUNT_MIN, GUESTS_AMOUNT_MAX, CHECK_POINTS, APARTMENT_FEATURES, APARTMENT_PHOTOS));
+  APARTMENTS.push(generateApartment(AVATAR_LINKS, OFFER_TITLES, AVATAR_COORDINATE_X_MIN, AVATAR__COORDINATE_X_MAX, AVATAR__COORDINATE_Y_MIN, AVATAR__COORDINATE_Y_MAX, APARTMENT_PRICE_MIN, APARTMENT_PRICE_MAX, APARTMENT_TYPES, ROOMS_AMOUNT_MIN, ROOMS_AMOUNT_MAX, GUESTS_AMOUNT_MIN, GUESTS_AMOUNT_MAX, CHECK_POINTS, APARTMENT_FEATURES, APARTMENT_PHOTOS));
 }
 
-showMap();
 
-var fragmentPin = document.createDocumentFragment();
-var similarPinElement = document.querySelector('.map__pins');
-
-for (var j = 0; j < APARTMENTS.length; j++) {
-  fragmentPin.appendChild(generatePinImage(APARTMENTS[j], PICTURE_WIDTH, PICTURE_HEIGHT));
-}
-similarPinElement.appendChild(fragmentPin);
+addDisabledAttribute('.ad-form-header');
+addDisabledAttribute('.ad-form__element');
+addDisabledAttribute('.map__filter');
+addDisabledAttribute('.map__features');
 
 
-var fragmentPopup = document.createDocumentFragment();
-var MapTemplate = document.querySelector('.map');
+var mainMapPin = document.querySelector('.map__pin--main');
 
-fragmentPopup.appendChild(generatePopupFragment(APARTMENTS[0]));
-MapTemplate.appendChild(fragmentPopup);
+writeCoordinateToAddressField(mainMapPin);
 
+//  Переход в активное состояние
+window.mainMapPin.addEventListener('mouseup', switchToActiveMode);
 
-var popupFeaturesElement = document.querySelector('.popup__features');
-popupFeaturesElement.appendChild(generateFeaturesFragment(APARTMENTS[0]));
-
-
-var popupElement = document.querySelector('.popup__photos');
-popupElement.appendChild(generatePhotosFragment(APARTMENTS[0]));
