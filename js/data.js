@@ -43,7 +43,7 @@
         y: window.utils.getRandomIntegerFromRange(topYmin, topYmax),
       },
     };
-  };
+  }
 
   var generateRandomFeatures = function (arr) {
     var newArr = [];
@@ -134,7 +134,7 @@
     generateApartment: generateApartment,
     generatePopupFragment: generatePopupFragment,
     generateFeaturesFragment: generateFeaturesFragment,
-    generatePhotosFragment: generatePhotosFragment
+    generatePhotosFragment: generatePhotosFragment,
   };
 
 })();
