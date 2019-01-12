@@ -88,13 +88,52 @@ MAP_MAIN_PIN.addEventListener('mousedown', function (evt) {
   if (!isActive) {
     activateMap();
   }
+
+  var startCoords = {
+    x: evt.clientX,
+    y: evt.clientY,
+  };
+
+  // Координаты, ограничивающие перемещение маркера
+
+  var limitCoords = {
+    MIN_X: 0,
+    MAX_X: MAP_ELEMENT.offsetWidth - 80,
+    MIN_Y: 130 - MAIN_PIN_CORRECTION,
+    MAX_Y: MAP_FILTERS_ELEMENT.offsetTop - MAIN_PIN_CORRECTION,
+  };
+
+  var onMouseMove = function (moveEvt) {
+    moveEvt.preventDefault();
+
+    var shift = {
+      x: startCoords.x - moveEvt.clientX,
+      y: startCoords.y - moveEvt.clientY,
+    };
+
+    startCoords = {
+      x: moveEvt.clientX,
+      y: moveEvt.clientY,
+    };
+
+    var pinX = Math.min(Math.max((MAP_MAIN_PIN.offsetLeft - shift.x), limitCoords.MIN_X), limitCoords.MAX_X);
+    var pinY = Math.min(Math.max((MAP_MAIN_PIN.offsetTop - shift.y), limitCoords.MIN_Y), limitCoords.MAX_Y);
+
+    MAP_MAIN_PIN.style.left = pinX + 'px';
+    MAP_MAIN_PIN.style.top = pinY + 'px';
+
+    updateAddress(isActive);
+    // window.debounce(renderPins);
+  };
+
   var onMouseUp = function (upEvt) {
     upEvt.preventDefault();
 
-    // document.removeEventListener('mousemove', onMouseMove);
+    document.removeEventListener('mousemove', onMouseMove);
     document.removeEventListener('mouseup', onMouseUp);
   };
 
+  document.addEventListener('mousemove', onMouseMove);
   document.addEventListener('mouseup', onMouseUp);
 });
 
@@ -412,8 +451,8 @@ function deactivateMap() {
   cleanMap();
   deactivateFilters();
 
-  // MAP_MAIN_PIN.style.top = '';
-  // MAP_MAIN_PIN.style.left = '';
+  MAP_MAIN_PIN.style.top = '50%';
+  MAP_MAIN_PIN.style.left = '50%';
 
   MAP_ELEMENT.classList.add('map--faded');
 }
@@ -469,7 +508,7 @@ function setMinPrice(propertyType) {
   var minPrices = {
     'flat': 1000,
     'house': 5000,
-    'palace': 10000
+    'palace': 10000,
   };
   priceInput.setAttribute('min', minPrices[propertyType] || 0);
   priceInput.setAttribute('placeholder', minPrices[propertyType] || 0);
@@ -549,7 +588,7 @@ var rulesRoomsCapacity = {
   '1': ['1'],
   '2': ['1', '2'],
   '3': ['1', '2', '3'],
-  '100': ['0']
+  '100': ['0'],
 };
 
 function checkRoomsCapacity(rooms, capacity, rules) {
