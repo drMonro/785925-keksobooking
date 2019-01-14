@@ -1,7 +1,6 @@
 'use strict';
 
 (function () {
-
   function isEscEvent(evt, action) {
     var ESC_KEYCODE = 27;
     if (evt.keyCode === ESC_KEYCODE) {
@@ -30,23 +29,9 @@
     }
   }
 
-  function getAndRemoveRandomElement(array) {
-    var indexRandom = getRandomIntegerFromRange(0, array.length - 1);
-    var elementRandom = array[indexRandom];
-    array.splice(indexRandom, 1);
-
-    return elementRandom;
-  }
-
-  function getRandomIntegerFromRange(min, max) {
-    return Math.floor(min + Math.random() * (max + 1 - min));
-  }
-
   window.utils = {
     isEscEvent: isEscEvent,
     isEnterEvent: isEnterEvent,
-    cleanNode: cleanNode,
-    getAndRemoveRandomElement: getAndRemoveRandomElement,
-    getRandomIntegerFromRange: getRandomIntegerFromRange,
+    cleanNode: cleanNode
   };
 })();

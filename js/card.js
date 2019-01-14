@@ -2,9 +2,7 @@
 'use strict';
 
 (function () {
-
   // Создает объявление по шаблону и вставляет в DOM
-
   function renderCard(cardData) {
     // Удаляем открытую карточку
     var existingCard = document.querySelector('.map__card');
@@ -18,7 +16,6 @@
     fragmentPopup.appendChild(window.data.generatePopupFragment(cardData));
     MapTemplate.appendChild(fragmentPopup);
 
-
     var popupFeaturesElement = document.querySelector('.popup__features');
     popupFeaturesElement.appendChild(window.data.generateFeaturesFragment(cardData));
 
@@ -28,7 +25,6 @@
     document.querySelector('.popup__close').addEventListener('click', closeCard);
 
     document.addEventListener('keydown', onEscPress);
-
   }
 
   function closeCard() {

@@ -1,49 +1,23 @@
-
 // Сообщение в модальном окне
 'use strict';
 
 (function () {
-  window.successMessage = function () {
-    var successTemplate = document.querySelector('#success').content;
-
+  window.statusMessage = function (statusTemplate, statusBlock) {
     var fragment = document.createDocumentFragment();
-    var successElement = successTemplate.cloneNode(true);
+    var statusElement = statusTemplate.cloneNode(true);
 
-    fragment.appendChild(successElement);
+    fragment.appendChild(statusElement);
 
-    var success = fragment.querySelector('.success');
+    var statusFragment = fragment.querySelector(statusBlock);
 
-    success.addEventListener('click', function (evt) {
+    statusFragment.addEventListener('click', function (evt) {
       evt.currentTarget.remove();
     });
 
-    document.querySelector('main').appendChild(fragment);
+    document.querySelector('main').appendChild(statusFragment);
 
     setTimeout(function () {
-      document.querySelector('.success').remove();
+      document.querySelector(statusBlock).remove();
     }, 5000);
-
-  };
-
-  window.errorMessage = function () {
-    var successTemplate = document.querySelector('#error').content;
-
-    var fragment = document.createDocumentFragment();
-    var successElement = successTemplate.cloneNode(true);
-
-    fragment.appendChild(successElement);
-
-    var success = fragment.querySelector('.error');
-
-    success.addEventListener('click', function (evt) {
-      evt.currentTarget.remove();
-    });
-
-    document.querySelector('main').appendChild(fragment);
-
-    setTimeout(function () {
-      document.querySelector('.error').remove();
-    }, 5000);
-
   };
 })();

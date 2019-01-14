@@ -1,10 +1,7 @@
 // Модуль для загрузки и отправки данных
-
-
 'use strict';
 
 (function () {
-
   var load = function (onLoad, onError) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';

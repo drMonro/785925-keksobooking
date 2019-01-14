@@ -48,19 +48,21 @@
     });
   });
 
+  var successBlock = '.success';
+  var errorBlock = '.error';
+  var successTemplate = document.querySelector('#success').content;
+  var errorTemplate = document.querySelector('#error').content;
+
   form.addEventListener('submit', function (evt) {
     evt.preventDefault();
 
     var formData = new FormData(form);
-    // photosCache.forEach(function (photo) {
-    //   formData.append('photos', photo);
-    // });
 
     window.backend.save(formData, function () {
-      window.successMessage();
+      window.statusMessage(successTemplate, successBlock);
       deactivateForm();
     }, function () {
-      window.errorMessage();
+      window.statusMessage(errorTemplate, errorBlock);
     });
   });
 

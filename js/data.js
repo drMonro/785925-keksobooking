@@ -1,77 +1,7 @@
 // модуль, который создаёт данные;
-
 'use strict';
 
 (function () {
-
-  function generateAvatarLinks(avatarLinks, linksCount) {
-    for (var i = 1; i <= linksCount; i++) {
-      var link = 'img/avatars/user' + leadingZeroes(i, 2) + '.png';
-      avatarLinks.push(link);
-    }
-    return avatarLinks;
-  }
-
-  function leadingZeroes(number, length) {
-    var link = '' + number;
-    while (link.length < length) {
-      link = '0' + link;
-    }
-    return link;
-  }
-
-  function generateApartment(avatars, titles, topXmin, topXmax, topYmin, topYmax, minPrice, maxPrice, housingTypes, minRoomCount, maxRoomCount, minGuestsCount, maxGuestsCount, checkPoints, houseFeatures, housePhotos) {
-    return {
-      author: {
-        avatar: window.utils.getAndRemoveRandomElement(avatars),
-      },
-      offer: {
-        title: window.utils.getAndRemoveRandomElement(titles),
-        address: window.utils.getRandomIntegerFromRange(topXmin, topXmax) + ', ' + window.utils.getRandomIntegerFromRange(topYmin, topYmax),
-        price: window.utils.getRandomIntegerFromRange(minPrice, maxPrice),
-        type: housingTypes[window.utils.getRandomIntegerFromRange(0, housingTypes.length - 1)],
-        rooms: window.utils.getRandomIntegerFromRange(minRoomCount, maxRoomCount),
-        guests: window.utils.getRandomIntegerFromRange(minGuestsCount, maxGuestsCount),
-        checkin: checkPoints[window.utils.getRandomIntegerFromRange(0, checkPoints.length - 1)],
-        checkout: checkPoints[window.utils.getRandomIntegerFromRange(0, checkPoints.length - 1)],
-        features: generateRandomFeatures(houseFeatures),
-        description: '',
-        photos: shuffleArray(housePhotos),
-      },
-      location: {
-        x: window.utils.getRandomIntegerFromRange(topXmin, topXmax),
-        y: window.utils.getRandomIntegerFromRange(topYmin, topYmax),
-      },
-    };
-  }
-
-  var generateRandomFeatures = function (arr) {
-    var newArr = [];
-    var cloneArr = arr.slice(0);
-    var randomArrLength = window.utils.getRandomIntegerFromRange(1, arr.length);
-
-    for (var i = 0; i < randomArrLength; i++) {
-      var randomIndex = window.utils.getRandomIntegerFromRange(0, cloneArr.length - 1);
-      newArr.push(cloneArr[randomIndex]);
-      cloneArr.splice(randomIndex, 1);
-    }
-    return newArr;
-  };
-
-  var shuffleArray = function (array) {
-    var currentIndex = array.length;
-    var temporaryValue;
-    var randomIndex;
-    while (currentIndex !== 0) {
-      randomIndex = window.utils.getRandomIntegerFromRange(0, array.length - 1);
-      currentIndex -= 1;
-      temporaryValue = array[currentIndex];
-      array[currentIndex] = array[randomIndex];
-      array[randomIndex] = temporaryValue;
-    }
-    return array;
-  };
-
   var generatePopupFragment = function (firstApartment) {
     var similarPopupTemplate = document.querySelector('#card').content;
     var popupElement = similarPopupTemplate.cloneNode(true);
@@ -130,8 +60,6 @@
   };
 
   window.data = {
-    generateAvatarLinks: generateAvatarLinks,
-    generateApartment: generateApartment,
     generatePopupFragment: generatePopupFragment,
     generateFeaturesFragment: generateFeaturesFragment,
     generatePhotosFragment: generatePhotosFragment
