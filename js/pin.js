@@ -3,16 +3,61 @@
 
 (function () {
 
+  var MAP_ELEMENT = document.querySelector('.map');
+  var MAP_FILTERS_ELEMENT = MAP_ELEMENT.querySelector('.map__filters-container');
+  var MAP_FILTERS = MAP_FILTERS_ELEMENT.querySelector('.map__filters');
+
+  var filters = {
+    'housing': {
+      'type': MAP_FILTERS.querySelector('#housing-type').value,
+      'price': MAP_FILTERS.querySelector('#housing-price').value,
+      'rooms': MAP_FILTERS.querySelector('#housing-rooms').value,
+      'guests': MAP_FILTERS.querySelector('#housing-guests').value
+    },
+    'features': {
+      'wifi': MAP_FILTERS.querySelector('#filter-wifi').checked,
+      'dishwasher': MAP_FILTERS.querySelector('#filter-dishwasher').checked,
+      'parking': MAP_FILTERS.querySelector('#filter-parking').checked,
+      'washer': MAP_FILTERS.querySelector('#filter-washer').checked,
+      'elevator': MAP_FILTERS.querySelector('#filter-elevator').checked,
+      'conditioner': MAP_FILTERS.querySelector('#filter-conditioner').checked
+    }
+  };
+
   // Отрисовывает метки на карте
   function renderPins() {
     window.map.cleanMap();
     var fragmentPin = document.createDocumentFragment();
     var similarPinElement = document.querySelector('.map__pins');
 
-    for (var j = 0; j < window.constants.APARTMENTS.length; j++) {
-      fragmentPin.appendChild(generatePinImage(window.constants.APARTMENTS[j], window.constants.PICTURE_WIDTH, window.constants.PICTURE_HEIGHT));
+    var filteredApartments = window.constants.APARTMENTS.slice()
+      .filter(checkFilters);
+
+    for (var i = 0; i < filteredApartments.length; i++) {
+      fragmentPin.appendChild(generatePinImage(filteredApartments[i], window.constants.PICTURE_WIDTH, window.constants.PICTURE_HEIGHT));
     }
     similarPinElement.appendChild(fragmentPin);
+  }
+
+  function checkFilters(hotel) {
+    // Проверяем основные параметры жилья
+    for (var prop in filters.housing) {
+      if (filters.housing.hasOwnProperty(prop)) {
+        var hotelPropValue = hotel.offer[prop];
+        if ((filters.housing[prop] !== 'any') && (hotelPropValue.toString() !== filters.housing[prop])) {
+          return false;
+        }
+      }
+    }
+    // Проверяем удобства
+    for (var feat in filters.features) {
+      if (filters.features.hasOwnProperty(feat)) {
+        if (filters.features[feat] === true && hotel.offer.features.indexOf(feat) === -1) {
+          return false;
+        }
+      }
+    }
+    return true;
   }
 
   function getMainPinLocation(isActive) {
