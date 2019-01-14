@@ -20,8 +20,7 @@
       window.pin.renderPins();
       activateFilters();
     }, function () {
-      document.console.log('!!!');
-      // window.message(errorMessage);
+      window.errorMessage();
     });
   }
 
@@ -42,8 +41,8 @@
 
     var limitCoords = {
       MIN_X: 0,
-      MAX_X: MAP_ELEMENT.offsetWidth - 80,
-      MIN_Y: 130 - window.constants.MAIN_PIN_CORRECTION,
+      MAX_X: MAP_ELEMENT.offsetWidth,
+      MIN_Y: 150 - window.constants.MAIN_PIN_CORRECTION,
       MAX_Y: MAP_FILTERS_ELEMENT.offsetTop - window.constants.MAIN_PIN_CORRECTION,
     };
 
@@ -67,7 +66,7 @@
       MAP_MAIN_PIN.style.top = pinY + 'px';
 
       window.form.updateAddress(isActive);
-      // window.debounce(renderPins);
+      window.debounce(window.pin.renderPins);
     };
 
     var onMouseUp = function (upEvt) {
@@ -96,9 +95,6 @@
   function deactivateMap() {
     cleanMap();
     deactivateFilters();
-
-    // MAP_MAIN_PIN.style.top = '';
-    // MAP_MAIN_PIN.style.left = '';
 
     MAP_MAIN_PIN.style.top = '50%';
     MAP_MAIN_PIN.style.left = '50%';
