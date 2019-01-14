@@ -41,11 +41,11 @@
     similarPinElement.appendChild(fragmentPin);
   }
 
-  function checkFilters(hotel) {
+  function checkFilters(apartment) {
     // Проверяем основные параметры жилья
     for (var prop in filters.housing) {
       if (filters.housing.hasOwnProperty(prop)) {
-        var hotelPropValue = hotel.offer[prop];
+        var hotelPropValue = apartment.offer[prop];
         if (prop === 'price') {
           hotelPropValue = getPriceCategory(hotelPropValue);
         }
@@ -57,7 +57,7 @@
     // Проверяем удобства
     for (var feat in filters.features) {
       if (filters.features.hasOwnProperty(feat)) {
-        if (filters.features[feat] === true && hotel.offer.features.indexOf(feat) === -1) {
+        if (filters.features[feat] === true && apartment.offer.features.indexOf(feat) === -1) {
           return false;
         }
       }

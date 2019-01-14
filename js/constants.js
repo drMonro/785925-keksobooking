@@ -1,7 +1,6 @@
 'use strict';
 
 (function () {
-
   var AVATAR_LINKS = [];
   var APARTMENTS = [];
   var APARTMENTS_AMOUNT = 8;
