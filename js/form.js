@@ -23,6 +23,12 @@
     for (var i = 0; i < fieldsets.length; i++) {
       fieldsets[i].disabled = false;
     }
+
+    // Это нужно, чтобы валидация работала правильно,
+    // если пользователь не будет изменять эти поля
+    updateAddress(true);
+    setMinPrice(typeSelect.value);
+    checkRoomsCapacity(roomsSelect, capacitySelect, rulesRoomsCapacity);
   }
 
   // Нажатие на кнопку .form__reset сбрасывает страницу в исходное неактивное состояние:
@@ -39,6 +45,22 @@
       if (typesAllowEnter.indexOf(evt.target.type) === -1) {
         evt.preventDefault();
       }
+    });
+  });
+
+  form.addEventListener('submit', function (evt) {
+    evt.preventDefault();
+
+    var formData = new FormData(form);
+    // photosCache.forEach(function (photo) {
+    //   formData.append('photos', photo);
+    // });
+
+    window.backend.save(formData, function () {
+      window.successMessage();
+      deactivateForm();
+    }, function () {
+      window.errorMessage();
     });
   });
 

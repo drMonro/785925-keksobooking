@@ -14,12 +14,15 @@
   function activateMap() {
     MAP_ELEMENT.classList.remove('map--faded');
     window.form.activateForm();
-    window.data.generateAvatarLinks(window.constants.AVATAR_LINKS, window.constants.APARTMENTS_AMOUNT);
-    for (var i = 0; i < window.constants.APARTMENTS_AMOUNT; i++) {
-      window.constants.APARTMENTS.push(window.data.generateApartment(window.constants.AVATAR_LINKS, window.constants.OFFER_TITLES, window.constants.AVATAR_COORDINATE_X_MIN, window.constants.AVATAR__COORDINATE_X_MAX, window.constants.AVATAR__COORDINATE_Y_MIN, window.constants.AVATAR__COORDINATE_Y_MAX, window.constants.APARTMENT_PRICE_MIN, window.constants.APARTMENT_PRICE_MAX, window.constants.APARTMENT_TYPES, window.constants.ROOMS_AMOUNT_MIN, window.constants.ROOMS_AMOUNT_MAX, window.constants.GUESTS_AMOUNT_MIN, window.constants.GUESTS_AMOUNT_MAX, window.constants.CHECK_POINTS, window.constants.APARTMENT_FEATURES, window.constants.APARTMENT_PHOTOS));
-    }
-    window.pin.renderPins();
-    activateFilters();
+
+    window.backend.load(function (response) {
+      window.constants.APARTMENTS = response;
+      window.pin.renderPins();
+      activateFilters();
+    }, function () {
+      document.console.log('!!!');
+      // window.message(errorMessage);
+    });
   }
 
   // Перетаскивание главной метки
@@ -83,6 +86,9 @@
     cleanMap();
     deactivateFilters();
 
+    // MAP_MAIN_PIN.style.top = '';
+    // MAP_MAIN_PIN.style.left = '';
+
     MAP_MAIN_PIN.style.top = '50%';
     MAP_MAIN_PIN.style.left = '50%';
 
@@ -115,7 +121,7 @@
     deactivateMap: deactivateMap,
     MAP_ELEMENT: MAP_ELEMENT,
     MAP_MAIN_PIN: MAP_MAIN_PIN,
-    cleanMap: cleanMap
+    cleanMap: cleanMap,
   };
 
 })();
