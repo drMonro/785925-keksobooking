@@ -134,7 +134,7 @@
     generateApartment: generateApartment,
     generatePopupFragment: generatePopupFragment,
     generateFeaturesFragment: generateFeaturesFragment,
-    generatePhotosFragment: generatePhotosFragment,
+    generatePhotosFragment: generatePhotosFragment
   };
 
 })();

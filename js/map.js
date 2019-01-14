@@ -36,14 +36,14 @@
 
     var startCoords = {
       x: evt.clientX,
-      y: evt.clientY,
+      y: evt.clientY
     };
 
     var limitCoords = {
       MIN_X: 0,
-      MAX_X: MAP_ELEMENT.offsetWidth,
+      MAX_X: MAP_ELEMENT.offsetWidth - 62,
       MIN_Y: 150 - window.constants.MAIN_PIN_CORRECTION,
-      MAX_Y: MAP_FILTERS_ELEMENT.offsetTop - window.constants.MAIN_PIN_CORRECTION,
+      MAX_Y: MAP_FILTERS_ELEMENT.offsetTop - 84,
     };
 
     var onMouseMove = function (moveEvt) {

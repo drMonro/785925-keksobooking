@@ -23,6 +23,7 @@
       'conditioner': MAP_FILTERS.querySelector('#filter-conditioner').checked,
     },
   };
+
   // Отрисовывает метки на карте
   function renderPins() {
     window.map.cleanMap();
@@ -30,27 +31,14 @@
     var similarPinElement = document.querySelector('.map__pins');
 
     var filteredApartments = window.constants.APARTMENTS.slice()
-      .filter(checkFilters)
-      .sort(function (left, right) {
-        return calculateDistance(left) - calculateDistance(right);
-      });
+      .filter(checkFilters);
 
     var num = Math.min(filteredApartments.length, PINS_NUM);
 
     for (var i = 0; i < num; i++) {
-      fragmentPin.appendChild(generatePinImage(filteredApartments[i], window.constants.PICTURE_WIDTH, window.constants.PICTURE_HEIGHT));
+      fragmentPin.appendChild(generatePinImage(filteredApartments[i]));
     }
     similarPinElement.appendChild(fragmentPin);
-  }
-
-
-  // Возвращает расстояние до главной метки
-
-  function calculateDistance(pin) {
-    var dx = (pin.location.x - getMainPinLocation().x);
-    var dy = (pin.location.y - getMainPinLocation().y);
-
-    return Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
   }
 
   function checkFilters(hotel) {
