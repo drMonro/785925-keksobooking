@@ -6,13 +6,13 @@
   var MAP_ELEMENT = document.querySelector('.map');
   var MAP_FILTERS_ELEMENT = MAP_ELEMENT.querySelector('.map__filters-container');
   var MAP_FILTERS = MAP_FILTERS_ELEMENT.querySelector('.map__filters');
-
+  var PINS_NUM = 5;
   var filters = {
     'housing': {
       'type': MAP_FILTERS.querySelector('#housing-type').value,
       'price': MAP_FILTERS.querySelector('#housing-price').value,
       'rooms': MAP_FILTERS.querySelector('#housing-rooms').value,
-      'guests': MAP_FILTERS.querySelector('#housing-guests').value
+      'guests': MAP_FILTERS.querySelector('#housing-guests').value,
     },
     'features': {
       'wifi': MAP_FILTERS.querySelector('#filter-wifi').checked,
@@ -20,8 +20,8 @@
       'parking': MAP_FILTERS.querySelector('#filter-parking').checked,
       'washer': MAP_FILTERS.querySelector('#filter-washer').checked,
       'elevator': MAP_FILTERS.querySelector('#filter-elevator').checked,
-      'conditioner': MAP_FILTERS.querySelector('#filter-conditioner').checked
-    }
+      'conditioner': MAP_FILTERS.querySelector('#filter-conditioner').checked,
+    },
   };
 
   // Отрисовывает метки на карте
@@ -33,8 +33,10 @@
     var filteredApartments = window.constants.APARTMENTS.slice()
       .filter(checkFilters);
 
-    for (var i = 0; i < filteredApartments.length; i++) {
-      fragmentPin.appendChild(generatePinImage(filteredApartments[i], window.constants.PICTURE_WIDTH, window.constants.PICTURE_HEIGHT));
+    var num = Math.min(filteredApartments.length, PINS_NUM);
+
+    for (var i = 0; i < num; i++) {
+      fragmentPin.appendChild(generatePinImage(filteredApartments[i]));
     }
     similarPinElement.appendChild(fragmentPin);
   }
@@ -44,6 +46,9 @@
     for (var prop in filters.housing) {
       if (filters.housing.hasOwnProperty(prop)) {
         var hotelPropValue = hotel.offer[prop];
+        if (prop === 'price') {
+          hotelPropValue = getPriceCategory(hotelPropValue);
+        }
         if ((filters.housing[prop] !== 'any') && (hotelPropValue.toString() !== filters.housing[prop])) {
           return false;
         }
@@ -58,6 +63,16 @@
       }
     }
     return true;
+  }
+
+  function getPriceCategory(price) {
+    if (price < 10000) {
+      return 'low';
+    } else if (price >= 50000) {
+      return 'high';
+    } else {
+      return 'middle';
+    }
   }
 
   function getMainPinLocation(isActive) {
@@ -117,7 +132,7 @@
   window.pin = {
     renderPins: renderPins,
     getMainPinLocation: getMainPinLocation,
-
+    filters: filters,
   };
 
 })();

@@ -49,9 +49,7 @@
     'http://o0.github.io/assets/images/tokyo/hotel2.jpg',
     'http://o0.github.io/assets/images/tokyo/hotel3.jpg',
   ];
-  var PICTURE_WIDTH = 40;
-  var PICTURE_HEIGHT = 40;
-  var MAIN_PIN_CORRECTION = 48;
+  var MAIN_PIN_CORRECTION = 0;
 
   window.constants = {
     AVATAR_LINKS: AVATAR_LINKS,
@@ -72,8 +70,6 @@
     CHECK_POINTS: CHECK_POINTS,
     APARTMENT_FEATURES: APARTMENT_FEATURES,
     APARTMENT_PHOTOS: APARTMENT_PHOTOS,
-    PICTURE_WIDTH: PICTURE_WIDTH,
-    PICTURE_HEIGHT: PICTURE_HEIGHT,
     MAIN_PIN_CORRECTION: MAIN_PIN_CORRECTION
   };
 
