@@ -81,6 +81,17 @@
     document.addEventListener('mouseup', onMouseUp);
   });
 
+  // // Изменение фильтров
+  MAP_FILTERS.addEventListener('change', function (evt) {
+    if (evt.target.name === 'features') {
+      window.pin.filters.features[evt.target.value] = evt.target.checked;
+    } else {
+      var key = evt.target.name.split('-')[1];
+      window.pin.filters.housing[key] = evt.target.value;
+    }
+    window.debounce(window.pin.renderPins);
+  });
+
   // Переводит карту в неактивное состояние
   function deactivateMap() {
     cleanMap();
@@ -122,6 +133,7 @@
     MAP_ELEMENT: MAP_ELEMENT,
     MAP_MAIN_PIN: MAP_MAIN_PIN,
     cleanMap: cleanMap,
+    MAP_PINS_ELEMENT: MAP_PINS_ELEMENT
   };
 
 })();
