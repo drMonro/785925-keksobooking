@@ -32,7 +32,7 @@
     return fragmentOfFeatures;
   };
 
-  var generatePhotosFragment = function (firstApartment) {
+  var generatePhotoFragment = function (apartment) {
     var popupElement = document.querySelector('.popup__photos');
     var popupPhoto = document.querySelector('.popup__photo');
 
@@ -40,8 +40,8 @@
 
     var fragmentOfPhotos = document.createDocumentFragment();
 
-    for (var i = 0; i < firstApartment.offer.photos.length; i++) {
-      imagesList.src = firstApartment.offer.photos[i];
+    for (var i = 0; i < apartment.offer.photos.length; i++) {
+      imagesList.src = apartment.offer.photos[i];
       var elementPhoto = imagesList.cloneNode(true);
       fragmentOfPhotos.appendChild(elementPhoto);
     }
@@ -62,7 +62,7 @@
   window.data = {
     generatePopupFragment: generatePopupFragment,
     generateFeaturesFragment: generateFeaturesFragment,
-    generatePhotosFragment: generatePhotosFragment
+    generatePhotoFragment: generatePhotoFragment
   };
 
 })();

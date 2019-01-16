@@ -3,29 +3,29 @@
 
 (function () {
 
-  var MAP_ELEMENT = document.querySelector('.map');
-  var MAP_FILTERS_ELEMENT = MAP_ELEMENT.querySelector('.map__filters-container');
-  var MAP_FILTERS = MAP_FILTERS_ELEMENT.querySelector('.map__filters');
-  var PINS_NUM = 5;
-  var filters = {
+  var mapBlock = document.querySelector('.map');
+  var filtersBlock = mapBlock.querySelector('.map__filters-container');
+  var filtersForm = filtersBlock.querySelector('.map__filters');
+  var Filters = {
     'housing': {
-      'type': MAP_FILTERS.querySelector('#housing-type').value,
-      'price': MAP_FILTERS.querySelector('#housing-price').value,
-      'rooms': MAP_FILTERS.querySelector('#housing-rooms').value,
-      'guests': MAP_FILTERS.querySelector('#housing-guests').value,
+      'type': filtersForm.querySelector('#housing-type').value,
+      'price': filtersForm.querySelector('#housing-price').value,
+      'rooms': filtersForm.querySelector('#housing-rooms').value,
+      'guests': filtersForm.querySelector('#housing-guests').value,
     },
     'features': {
-      'wifi': MAP_FILTERS.querySelector('#filter-wifi').checked,
-      'dishwasher': MAP_FILTERS.querySelector('#filter-dishwasher').checked,
-      'parking': MAP_FILTERS.querySelector('#filter-parking').checked,
-      'washer': MAP_FILTERS.querySelector('#filter-washer').checked,
-      'elevator': MAP_FILTERS.querySelector('#filter-elevator').checked,
-      'conditioner': MAP_FILTERS.querySelector('#filter-conditioner').checked,
+      'wifi': filtersForm.querySelector('#filter-wifi').checked,
+      'dishwasher': filtersForm.querySelector('#filter-dishwasher').checked,
+      'parking': filtersForm.querySelector('#filter-parking').checked,
+      'washer': filtersForm.querySelector('#filter-washer').checked,
+      'elevator': filtersForm.querySelector('#filter-elevator').checked,
+      'conditioner': filtersForm.querySelector('#filter-conditioner').checked,
     },
   };
 
   // Отрисовывает метки на карте
   function renderPins() {
+    var PINS_NUM = 5;
     window.map.cleanMap();
     var fragmentPin = document.createDocumentFragment();
     var similarPinElement = document.querySelector('.map__pins');
@@ -43,21 +43,21 @@
 
   function checkFilters(apartment) {
     // Проверяем основные параметры жилья
-    for (var prop in filters.housing) {
-      if (filters.housing.hasOwnProperty(prop)) {
-        var hotelPropValue = apartment.offer[prop];
-        if (prop === 'price') {
+    for (var property in Filters.housing) {
+      if (Filters.housing.hasOwnProperty(property)) {
+        var hotelPropValue = apartment.offer[property];
+        if (property === 'price') {
           hotelPropValue = getPriceCategory(hotelPropValue);
         }
-        if ((filters.housing[prop] !== 'any') && (hotelPropValue.toString() !== filters.housing[prop])) {
+        if ((Filters.housing[property] !== 'any') && (hotelPropValue.toString() !== Filters.housing[property])) {
           return false;
         }
       }
     }
     // Проверяем удобства
-    for (var feat in filters.features) {
-      if (filters.features.hasOwnProperty(feat)) {
-        if (filters.features[feat] === true && apartment.offer.features.indexOf(feat) === -1) {
+    for (var feature in Filters.features) {
+      if (Filters.features.hasOwnProperty(feature)) {
+        if (Filters.features[feature] === true && apartment.offer.features.indexOf(feature) === -1) {
           return false;
         }
       }
@@ -78,19 +78,18 @@
   function getMainPinLocation(isActive) {
     var pinCorrection = isActive ? window.constants.MAIN_PIN_CORRECTION : 0;
 
-    var locationX = window.map.MAP_MAIN_PIN.offsetLeft;
-    var locationY = window.map.MAP_MAIN_PIN.offsetTop + pinCorrection;
+    var locationX = window.map.mainPin.offsetLeft + pinCorrection;
+    var locationY = window.map.mainPin.offsetTop;
 
     return {x: locationX, y: locationY};
   }
 
   var generatePinImage = function (apartment) {
-    var TEMPLATE = document.querySelector('#pin').content;
-    var PIN_TEMPLATE = TEMPLATE.querySelector('.map__pin');
-    var PIN_HEIGHT = 70;
-    var pinElement = PIN_TEMPLATE.cloneNode(true);
+    var pinTemplate = document.querySelector('#pin').content;
+    var pinBlock = pinTemplate.querySelector('.map__pin');
+    var pinElement = pinBlock.cloneNode(true);
     pinElement.style.left = (apartment.location.x) + 'px';
-    pinElement.style.top = (apartment.location.y - PIN_HEIGHT / 2) + 'px';
+    pinElement.style.top = (apartment.location.y) + 'px';
 
     pinElement.querySelector('img').setAttribute('src', apartment.author.avatar);
     pinElement.querySelector('img').setAttribute('alt', apartment.offer.title);
@@ -132,7 +131,7 @@
   window.pin = {
     renderPins: renderPins,
     getMainPinLocation: getMainPinLocation,
-    filters: filters,
+    Filters: Filters,
   };
 
 })();

@@ -2,22 +2,39 @@
 'use strict';
 
 (function () {
-  window.statusMessage = function (statusTemplate, statusBlock) {
-    var fragment = document.createDocumentFragment();
-    var statusElement = statusTemplate.cloneNode(true);
+  // Создает сообщение об ошибке или успехе
+  function renderStatusMessage(statusTemplate, statusElement) {
 
-    fragment.appendChild(statusElement);
+    var mainContainer = document.querySelector('main');
+    var messageFragment = document.createDocumentFragment();
+    var messageBlock = statusTemplate.cloneNode(true);
 
-    var statusFragment = fragment.querySelector(statusBlock);
+    messageFragment.appendChild(messageBlock);
 
-    statusFragment.addEventListener('click', function (evt) {
-      evt.currentTarget.remove();
-    });
+    var statusBlock = messageFragment.querySelector(statusElement);
 
-    document.querySelector('main').appendChild(statusFragment);
-
+    mainContainer.insertBefore(statusBlock, mainContainer.firstChild);
+    document.querySelector(statusElement).addEventListener('click', closeMessage);
+    document.addEventListener('keydown', onEscPress);
     setTimeout(function () {
-      document.querySelector(statusBlock).remove();
+      mainContainer.firstChild.remove();
     }, 5000);
+
+  }
+
+  function closeMessage() {
+    var container = document.querySelector('main');
+    container.firstChild.remove();
+    document.removeEventListener('keydown', onEscPress);
+  }
+
+  function onEscPress(evt) {
+    window.utils.isEscEvent(evt, closeMessage);
+  }
+
+  window.messages = {
+    renderStatusMessage: renderStatusMessage
   };
+
 })();
+

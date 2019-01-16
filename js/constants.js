@@ -48,7 +48,7 @@
     'http://o0.github.io/assets/images/tokyo/hotel2.jpg',
     'http://o0.github.io/assets/images/tokyo/hotel3.jpg',
   ];
-  var MAIN_PIN_CORRECTION = 0;
+  var MAIN_PIN_CORRECTION = 31;
 
   window.constants = {
     AVATAR_LINKS: AVATAR_LINKS,
