@@ -11,16 +11,16 @@
     }
 
     var fragmentPopup = document.createDocumentFragment();
-    var MapTemplate = document.querySelector('.map');
+    var mapTemplate = document.querySelector('.map');
 
     fragmentPopup.appendChild(window.data.generatePopupFragment(cardData));
-    MapTemplate.appendChild(fragmentPopup);
+    mapTemplate.appendChild(fragmentPopup);
 
     var popupFeaturesElement = document.querySelector('.popup__features');
     popupFeaturesElement.appendChild(window.data.generateFeaturesFragment(cardData));
 
     var popupElement = document.querySelector('.popup__photos');
-    popupElement.appendChild(window.data.generatePhotosFragment(cardData));
+    popupElement.appendChild(window.data.generatePhotoFragment(cardData));
 
     document.querySelector('.popup__close').addEventListener('click', closeCard);
 

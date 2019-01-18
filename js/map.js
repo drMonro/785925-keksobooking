@@ -2,134 +2,137 @@
 'use strict';
 
 (function () {
-
-  var MAP_ELEMENT = document.querySelector('.map');
-  var MAP_MAIN_PIN = MAP_ELEMENT.querySelector('.map__pin--main');
-  var MAP_PINS_ELEMENT = MAP_ELEMENT.querySelector('.map__pins');
-  var MAP_FILTERS_ELEMENT = MAP_ELEMENT.querySelector('.map__filters-container');
-  var MAP_FILTERS = MAP_FILTERS_ELEMENT.querySelector('.map__filters');
+  var TIMEOUT = 10000;
+  var STATUS = 200;
+  var DATA_URL = 'https://js.dump.academy/keksobooking/data';
+  var PINS_COUNT = 5;
+  var mapElement = document.querySelector('.map');
+  var mainPin = mapElement.querySelector('.map__pin--main');
+  var filtersElement = mapElement.querySelector('.map__filters-container');
+  var filtersForm = filtersElement.querySelector('.map__filters');
+  var submitForm = document.querySelector('.ad-form');
+  var allFieldset = submitForm.querySelectorAll('fieldset');
+  var pinsElement = document.querySelector('.map__pins');
 
 
   // Переводит карту в активное состояние
-  function activateMap() {
-    MAP_ELEMENT.classList.remove('map--faded');
-    window.form.activateForm();
-
+  function activateMap(map, form, fieldset, filters, timeout, status, url, pinsCount) {
+    map.classList.remove('map--faded');
+    window.form.activateForm(form, fieldset);
     window.backend.load(function (response) {
       window.constants.APARTMENTS = response;
-      window.pin.renderPins();
-      activateFilters();
+      window.pin.renderPins(pinsCount);
+      activateFilters(filters);
     }, function () {
-      window.errorMessage();
-    });
+      window.messages.renderStatusMessage(window.form.errorTemplate, window.form.errorElement);
+    }, timeout, status, url);
   }
 
-  // Перетаскивание главной метки
-  MAP_MAIN_PIN.addEventListener('mousedown', function (evt) {
-    evt.preventDefault();
+  // Переводит карту в неактивное состояние
+  function deactivateMap(map, pin, filters) {
+    cleanMap();
+    deactivateFilters(filters);
+    window.images.resetImages(window.images.avatarPreview, window.images.AVATAR_DEFAULT_SRC);
 
-    // Первое перемещение метки переводит страницу в активное состояние
-    var isActive = !(MAP_ELEMENT.classList.contains('map--faded'));
-    if (!isActive) {
-      activateMap();
+    pin.style.top = '50%';
+    pin.style.left = '50%';
+
+    map.classList.add('map--faded');
+  }
+
+  // Удаляет элементы из карты
+  function cleanMap() {
+    window.utils.cleanNode(mapElement, '.map__card');
+    window.utils.cleanNode(pinsElement, '.map__pin:not(.map__pin--main)');
+  }
+
+  // Блокировка фильтров
+  function deactivateFilters(filters) {
+    window.pin.setDefaultFilters();
+    filters.reset();
+    for (var i = 0; i < filters.children.length; i++) {
+      filters.children[i].disabled = true;
     }
+  }
 
-    var startCoords = {
-      x: evt.clientX,
-      y: evt.clientY
+  // Разблокировка фильтров
+  function activateFilters(filters) {
+    for (var i = 0; i < filters.children.length; i++) {
+      filters.children[i].disabled = false;
+    }
+  }
+
+
+  // Первое перемещение метки переводит страницу в активное состояние
+  mainPin.addEventListener('mousedown', function (evt) {
+    evt.preventDefault();
+    var isActive = !(mapElement.classList.contains('map--faded'));
+    if (!isActive) {
+      activateMap(mapElement, submitForm, allFieldset, filtersForm, TIMEOUT, STATUS, DATA_URL, PINS_COUNT);
+    }
+    var StartCoordinate = {
+      X: evt.clientX,
+      Y: evt.clientY,
     };
 
-    var limitCoords = {
+    var CoordinatesLimit = {
       MIN_X: 0,
-      MAX_X: MAP_ELEMENT.offsetWidth - 62,
-      MIN_Y: 150 - window.constants.MAIN_PIN_CORRECTION,
-      MAX_Y: MAP_FILTERS_ELEMENT.offsetTop - 84,
+      MAX_X: mapElement.offsetWidth - 62,
+      MIN_Y: 130,
+      MAX_Y: 630,
     };
 
-    var onMouseMove = function (moveEvt) {
+    function onMouseMove(moveEvt) {
       moveEvt.preventDefault();
 
-      var shift = {
-        x: startCoords.x - moveEvt.clientX,
-        y: startCoords.y - moveEvt.clientY,
+      var CoordinatesShift = {
+        X: StartCoordinate.X - moveEvt.clientX,
+        Y: StartCoordinate.Y - moveEvt.clientY,
       };
 
-      startCoords = {
-        x: moveEvt.clientX,
-        y: moveEvt.clientY,
+      StartCoordinate = {
+        X: moveEvt.clientX,
+        Y: moveEvt.clientY,
       };
 
-      var pinX = Math.min(Math.max((MAP_MAIN_PIN.offsetLeft - shift.x), limitCoords.MIN_X), limitCoords.MAX_X);
-      var pinY = Math.min(Math.max((MAP_MAIN_PIN.offsetTop - shift.y), limitCoords.MIN_Y), limitCoords.MAX_Y);
+      var pinX = Math.min(Math.max((mainPin.offsetLeft - CoordinatesShift.X), CoordinatesLimit.MIN_X), CoordinatesLimit.MAX_X);
+      var pinY = Math.min(Math.max((mainPin.offsetTop - CoordinatesShift.Y), CoordinatesLimit.MIN_Y), CoordinatesLimit.MAX_Y);
 
-      MAP_MAIN_PIN.style.left = pinX + 'px';
-      MAP_MAIN_PIN.style.top = pinY + 'px';
+      mainPin.style.left = pinX + 'px';
+      mainPin.style.top = pinY + 'px';
 
       window.form.updateAddress(isActive);
-      window.debounce(window.pin.renderPins);
-    };
+      window.debounce(window.pin.renderPins(PINS_COUNT));
+    }
 
-    var onMouseUp = function (upEvt) {
+    function onMouseUp(upEvt) {
       upEvt.preventDefault();
-
       document.removeEventListener('mousemove', onMouseMove);
       document.removeEventListener('mouseup', onMouseUp);
-    };
+    }
 
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
   });
 
-  // // Изменение фильтров
-  MAP_FILTERS.addEventListener('change', function (evt) {
+  // Изменение фильтров
+  filtersForm.addEventListener('change', function (evt) {
     if (evt.target.name === 'features') {
-      window.pin.filters.features[evt.target.value] = evt.target.checked;
+      window.pin.Filters.features[evt.target.value] = evt.target.checked;
     } else {
       var key = evt.target.name.split('-')[1];
-      window.pin.filters.housing[key] = evt.target.value;
+      window.pin.Filters.housing[key] = evt.target.value;
     }
-    window.debounce(window.pin.renderPins);
+
+    window.debounce(window.pin.renderPins(PINS_COUNT));
   });
-
-  // Переводит карту в неактивное состояние
-  function deactivateMap() {
-    cleanMap();
-    deactivateFilters();
-
-    MAP_MAIN_PIN.style.top = '50%';
-    MAP_MAIN_PIN.style.left = '50%';
-
-    MAP_ELEMENT.classList.add('map--faded');
-  }
-
-  // Удаляет элементы из карты
-  function cleanMap() {
-    window.utils.cleanNode(MAP_ELEMENT, '.map__card');
-    window.utils.cleanNode(MAP_PINS_ELEMENT, '.map__pin:not(.map__pin--main)');
-  }
-
-
-  // Блокировка фильтров
-  function deactivateFilters() {
-    for (var i = 0; i < MAP_FILTERS.children.length; i++) {
-      MAP_FILTERS.children[i].disabled = true;
-    }
-  }
-
-
-  // Разблокировка фильтров
-  function activateFilters() {
-    for (var i = 0; i < MAP_FILTERS.children.length; i++) {
-      MAP_FILTERS.children[i].disabled = false;
-    }
-  }
 
   window.map = {
     deactivateMap: deactivateMap,
-    MAP_ELEMENT: MAP_ELEMENT,
-    MAP_MAIN_PIN: MAP_MAIN_PIN,
+    mainPin: mainPin,
     cleanMap: cleanMap,
-    MAP_PINS_ELEMENT: MAP_PINS_ELEMENT
+    TIMEOUT: TIMEOUT,
+    STATUS: STATUS,
   };
 
 })();
