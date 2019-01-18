@@ -2,6 +2,7 @@
 'use strict';
 
 (function () {
+
   var mapElement = document.querySelector('.map');
   var filtersElement = mapElement.querySelector('.map__filters-container');
   var filtersForm = filtersElement.querySelector('.map__filters');
@@ -24,8 +25,8 @@
 
 
   // Отрисовывает метки на карте
-  function renderPins() {
-    var PINS_COUNT = 5;
+  function renderPins(pinsCount) {
+
     window.map.cleanMap();
     var fragmentPin = document.createDocumentFragment();
     var similarPinElement = document.querySelector('.map__pins');
@@ -33,7 +34,7 @@
     var filteredApartments = window.constants.APARTMENTS.slice()
       .filter(checkFilters);
 
-    var num = Math.min(filteredApartments.length, PINS_COUNT);
+    var num = Math.min(filteredApartments.length, pinsCount);
 
     for (var i = 0; i < num; i++) {
       fragmentPin.appendChild(generatePinImage(filteredApartments[i]));

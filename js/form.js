@@ -2,6 +2,13 @@
 'use strict';
 
 (function () {
+  var RulesRoomsCapacities = {
+    '1': ['1'],
+    '2': ['1', '2'],
+    '3': ['1', '2', '3'],
+    '100': ['0'],
+  };
+  var SAVE_URL = 'https://js.dump.academy/keksobooking';
   var submitForm = document.querySelector('.ad-form');
   var allFieldset = submitForm.querySelectorAll('fieldset');
   var mapElement = document.querySelector('.map');
@@ -19,13 +26,6 @@
   var timeOutSelect = submitForm.querySelector('[name="timeout"]');
   var roomsSelect = submitForm.querySelector('[name="rooms"]');
   var capacitySelect = submitForm.querySelector('[name="capacity"]');
-  var RulesRoomsCapacities = {
-    '1': ['1'],
-    '2': ['1', '2'],
-    '3': ['1', '2', '3'],
-    '100': ['0'],
-  };
-  var SAVE_URL = 'https://js.dump.academy/keksobooking';
 
 
   // Заполняем поле адреса после открытия страницы
@@ -61,7 +61,7 @@
       field.disabled = true;
     });
 
-    window.map.deactivateMap(map, form, pin, filters);
+    window.map.deactivateMap(map, pin, filters);
     // Добавляем затемнение формы
     form.classList.add('ad-form--disabled');
     updateAddress(false);

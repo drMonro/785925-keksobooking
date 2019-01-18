@@ -2,6 +2,10 @@
 'use strict';
 
 (function () {
+  var TIMEOUT = 10000;
+  var STATUS = 200;
+  var DATA_URL = 'https://js.dump.academy/keksobooking/data';
+  var PINS_COUNT = 5;
   var mapElement = document.querySelector('.map');
   var mainPin = mapElement.querySelector('.map__pin--main');
   var filtersElement = mapElement.querySelector('.map__filters-container');
@@ -9,18 +13,15 @@
   var submitForm = document.querySelector('.ad-form');
   var allFieldset = submitForm.querySelectorAll('fieldset');
   var pinsElement = document.querySelector('.map__pins');
-  var TIMEOUT = 10000;
-  var STATUS = 200;
-  var DATA_URL = 'https://js.dump.academy/keksobooking/data';
 
 
   // Переводит карту в активное состояние
-  function activateMap(map, form, fieldset, filters, timeout, status, url) {
+  function activateMap(map, form, fieldset, filters, timeout, status, url, pinsCount) {
     map.classList.remove('map--faded');
     window.form.activateForm(form, fieldset);
     window.backend.load(function (response) {
       window.constants.APARTMENTS = response;
-      window.pin.renderPins();
+      window.pin.renderPins(pinsCount);
       activateFilters(filters);
     }, function () {
       window.messages.renderStatusMessage(window.form.errorTemplate, window.form.errorElement);
@@ -28,7 +29,7 @@
   }
 
   // Переводит карту в неактивное состояние
-  function deactivateMap(map, form, pin, filters) {
+  function deactivateMap(map, pin, filters) {
     cleanMap();
     deactivateFilters(filters);
     window.images.resetImages(window.images.avatarPreview, window.images.AVATAR_DEFAULT_SRC);
@@ -67,7 +68,7 @@
     evt.preventDefault();
     var isActive = !(mapElement.classList.contains('map--faded'));
     if (!isActive) {
-      activateMap(mapElement, submitForm, allFieldset, filtersForm, TIMEOUT, STATUS, DATA_URL);
+      activateMap(mapElement, submitForm, allFieldset, filtersForm, TIMEOUT, STATUS, DATA_URL, PINS_COUNT);
     }
     var StartCoordinate = {
       X: evt.clientX,
@@ -81,7 +82,7 @@
       MAX_Y: 630,
     };
 
-    var onMouseMove = function (moveEvt) {
+    function onMouseMove(moveEvt) {
       moveEvt.preventDefault();
 
       var CoordinatesShift = {
@@ -101,14 +102,15 @@
       mainPin.style.top = pinY + 'px';
 
       window.form.updateAddress(isActive);
-      window.debounce(window.pin.renderPins());
-    };
+      window.debounce(window.pin.renderPins(PINS_COUNT));
+    }
 
-    var onMouseUp = function (upEvt) {
+    function onMouseUp(upEvt) {
       upEvt.preventDefault();
       document.removeEventListener('mousemove', onMouseMove);
       document.removeEventListener('mouseup', onMouseUp);
-    };
+    }
+
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
   });
@@ -122,7 +124,7 @@
       window.pin.Filters.housing[key] = evt.target.value;
     }
 
-    window.debounce(window.pin.renderPins());
+    window.debounce(window.pin.renderPins(PINS_COUNT));
   });
 
   window.map = {
