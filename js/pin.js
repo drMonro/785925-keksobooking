@@ -2,10 +2,9 @@
 'use strict';
 
 (function () {
-
-  var mapBlock = document.querySelector('.map');
-  var filtersBlock = mapBlock.querySelector('.map__filters-container');
-  var filtersForm = filtersBlock.querySelector('.map__filters');
+  var mapElement = document.querySelector('.map');
+  var filtersElement = mapElement.querySelector('.map__filters-container');
+  var filtersForm = filtersElement.querySelector('.map__filters');
   var Filters = {
     'housing': {
       'type': filtersForm.querySelector('#housing-type').value,
@@ -23,9 +22,10 @@
     },
   };
 
+
   // Отрисовывает метки на карте
   function renderPins() {
-    var PINS_NUM = 5;
+    var PINS_COUNT = 5;
     window.map.cleanMap();
     var fragmentPin = document.createDocumentFragment();
     var similarPinElement = document.querySelector('.map__pins');
@@ -33,7 +33,7 @@
     var filteredApartments = window.constants.APARTMENTS.slice()
       .filter(checkFilters);
 
-    var num = Math.min(filteredApartments.length, PINS_NUM);
+    var num = Math.min(filteredApartments.length, PINS_COUNT);
 
     for (var i = 0; i < num; i++) {
       fragmentPin.appendChild(generatePinImage(filteredApartments[i]));
@@ -45,11 +45,11 @@
     // Проверяем основные параметры жилья
     for (var property in Filters.housing) {
       if (Filters.housing.hasOwnProperty(property)) {
-        var hotelPropValue = apartment.offer[property];
+        var apartmentPropertyValue = apartment.offer[property];
         if (property === 'price') {
-          hotelPropValue = getPriceCategory(hotelPropValue);
+          apartmentPropertyValue = getPriceCategory(apartmentPropertyValue);
         }
-        if ((Filters.housing[property] !== 'any') && (hotelPropValue.toString() !== Filters.housing[property])) {
+        if ((Filters.housing[property] !== 'any') && (apartmentPropertyValue.toString() !== Filters.housing[property])) {
           return false;
         }
       }
@@ -65,65 +65,79 @@
     return true;
   }
 
-  function getPriceCategory(price) {
-    if (price < 10000) {
-      return 'low';
-    } else if (price >= 50000) {
-      return 'high';
-    } else {
-      return 'middle';
+  function setDefaultFilters() {
+    for (var property in Filters.housing) {
+      if (Filters.housing.hasOwnProperty(property)) {
+        if ((Filters.housing[property] !== 'any')) {
+          Filters.housing[property] = 'any';
+        }
+      }
+    }
+    for (var feature in Filters.features) {
+      if (Filters.features.hasOwnProperty(feature)) {
+        if ((Filters.features[feature] === true)) {
+          Filters.features[feature] = false;
+        }
+      }
     }
   }
 
-  function getMainPinLocation(isActive) {
-    var pinCorrection = isActive ? window.constants.MAIN_PIN_CORRECTION : 0;
+  function getPriceCategory(price) {
+    if (price < window.constants.LOW_PRICE) {
+      return 'low';
+    } else if (price >= window.constants.HIGH_PRICE) {
+      return 'high';
+    }
 
-    var locationX = window.map.mainPin.offsetLeft + pinCorrection;
-    var locationY = window.map.mainPin.offsetTop;
+    return 'middle';
+  }
+
+  function getMainPinLocation(isActive) {
+    var pinCorrectionX = isActive ? window.constants.MAIN_PIN_CORRECTION_X : 0;
+    var pinCorrectionY = isActive ? window.constants.MAIN_PIN_CORRECTION_Y : 0;
+
+    var locationX = window.map.mainPin.offsetLeft + pinCorrectionX;
+    var locationY = window.map.mainPin.offsetTop + pinCorrectionY;
 
     return {x: locationX, y: locationY};
   }
 
-  var generatePinImage = function (apartment) {
+  function generatePinImage(apartment) {
     var pinTemplate = document.querySelector('#pin').content;
-    var pinBlock = pinTemplate.querySelector('.map__pin');
-    var pinElement = pinBlock.cloneNode(true);
-    pinElement.style.left = (apartment.location.x) + 'px';
-    pinElement.style.top = (apartment.location.y) + 'px';
+    var pinElement = pinTemplate.querySelector('.map__pin');
+    var pin = pinElement.cloneNode(true);
+    pin.style.left = (apartment.location.x) + 'px';
+    pin.style.top = (apartment.location.y) + 'px';
 
-    pinElement.querySelector('img').setAttribute('src', apartment.author.avatar);
-    pinElement.querySelector('img').setAttribute('alt', apartment.offer.title);
+    pin.querySelector('img').setAttribute('src', apartment.author.avatar);
+    pin.querySelector('img').setAttribute('alt', apartment.offer.title);
 
 
-    pinElement.addEventListener('click', function () {
-      if (!pinElement.classList.contains('map__pin--selected')) {
-        pinClickHandler(pinElement, apartment);
+    pin.addEventListener('click', function () {
+      if (!pin.classList.contains('map__pin--selected')) {
+        pinClickHandler(pin, apartment);
       }
     });
 
-    return pinElement;
-  };
+    return pin;
+  }
 
   // События по клику на метку
-
   function pinClickHandler(selectedPinElement, selectedPinData) {
     // Переключает класс
     toggleSelectedPin(selectedPinElement);
-
     // Отрисовывает карточку для выбранной метки
     window.card.renderCard(selectedPinData);
   }
 
-
   // Добавляет класс --selected выбранной метке
   // удаляет этот класс с выбранной ранее метки
-
   function toggleSelectedPin(selectedPin) {
     var pins = document.querySelectorAll('.map__pin');
 
-    for (var i = 0; i < pins.length; i++) {
-      pins[i].classList.remove('map__pin--selected');
-    }
+    pins.forEach(function (pin) {
+      pin.classList.remove('map__pin--selected');
+    });
 
     selectedPin.classList.add('map__pin--selected');
   }
@@ -132,6 +146,7 @@
     renderPins: renderPins,
     getMainPinLocation: getMainPinLocation,
     Filters: Filters,
+    setDefaultFilters: setDefaultFilters,
   };
 
 })();

@@ -6,21 +6,21 @@
   var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
   var ImageSize = {
     WIDTH: 70,
-    HEIGHT: 70
+    HEIGHT: 70,
   };
-
   var avatarChooser = document.querySelector('#avatar');
   var imagesChooser = document.querySelector('#images');
   var avatarPreview = document.querySelector('.ad-form-header__preview img');
   var imagesContainer = document.querySelector('.ad-form__photo-container');
   var photoPreview = document.querySelector('.ad-form__photo');
 
-  // Функция, отрисовывающая аватар
-  var renderAvatar = function (src) {
-    avatarPreview.src = src;
-  };
 
-  var renderImages = function (src) {
+  // Функция, отрисовывающая аватар
+  function renderAvatar(src) {
+    avatarPreview.src = src;
+  }
+
+  function renderImages(src) {
     var newPhotoPreview = photoPreview.cloneNode();
     var image = document.createElement('img');
     image.src = src;
@@ -28,21 +28,20 @@
     image.height = ImageSize.HEIGHT;
     newPhotoPreview.appendChild(image);
     imagesContainer.insertBefore(newPhotoPreview, photoPreview);
-  };
-
+  }
 
   // Обработчик события для аватарки
-  var avatarChangeHandler = function (evt) {
-    displayImages(evt.target.files, renderAvatar);
-  };
+  function avatarChangeHandler(evt) {
+    displayImages(evt.target.files, renderAvatar, window.form.errorTemplate, window.form.errorElement);
+  }
 
   // Обработчик события для фото жилья
-  var imagesChangeHandler = function (evt) {
-    displayImages(evt.target.files, renderImages);
-  };
+  function imagesChangeHandler(evt) {
+    displayImages(evt.target.files, renderImages, window.form.errorTemplate, window.form.errorElement);
+  }
 
   // Функция, отображающая изображения на странице
-  var displayImages = function (files, renderFunction) {
+  function displayImages(files, renderFunction, template, element) {
     Array.from(files).forEach(function (item) {
       var fileName = item.name.toLowerCase();
       var matches = FILE_TYPES.some(function (it) {
@@ -55,28 +54,31 @@
         });
 
         reader.addEventListener('error', function () {
-          window.messages.renderStatusMessage(window.form.errorTemplate, window.form.errorBlock);
+          window.messages.renderStatusMessage(template, element);
         });
 
         reader.readAsDataURL(item);
       }
     });
-  };
-
-  imagesChooser.addEventListener('change', imagesChangeHandler);
-  avatarChooser.addEventListener('change', avatarChangeHandler);
+  }
 
   // Сброс всех добавленных на страницу изображений
-  var resetImages = function () {
+  function resetImages(avatar, defaultAvatar) {
     var photos = document.querySelectorAll('.ad-form__photo:not(:last-child)');
     photos.forEach(function (item) {
       item.remove();
     });
-    avatarPreview.src = AVATAR_DEFAULT_SRC;
-  };
+    avatar.src = defaultAvatar;
+  }
+
+
+  imagesChooser.addEventListener('change', imagesChangeHandler);
+  avatarChooser.addEventListener('change', avatarChangeHandler);
 
   window.images = {
-    resetImages: resetImages
+    resetImages: resetImages,
+    avatarPreview: avatarPreview,
+    AVATAR_DEFAULT_SRC: AVATAR_DEFAULT_SRC
   };
 
 })();

@@ -2,7 +2,7 @@
 'use strict';
 
 (function () {
-  var generatePopupFragment = function (apartment) {
+  function generatePopupFragment(apartment) {
     var similarPopupTemplate = document.querySelector('#card').content;
     var popupElement = similarPopupTemplate.cloneNode(true);
     popupElement.querySelector('.popup__avatar').setAttribute('src', apartment.author.avatar);
@@ -15,24 +15,24 @@
     popupElement.querySelector('.popup__description').textContent = apartment.offer.description;
 
     return popupElement;
-  };
+  }
 
-  var generateFeaturesFragment = function (apartment) {
+  function generateFeaturesFragment(apartment) {
     var postTemplate = document.querySelector('.popup__features');
-    postTemplate.innerHTML = ' ';
+    postTemplate.innerHTML = '';
 
     var fragmentOfFeatures = document.createDocumentFragment();
 
-    for (var i = 0; i < apartment.offer.features.length; i++) {
+    apartment.offer.features.forEach(function (feature, i) {
       var featureListItem = document.createElement('li');
       featureListItem.classList.add('popup__feature', 'popup__feature--' + apartment.offer.features[i]);
       fragmentOfFeatures.appendChild(featureListItem);
-    }
+    });
 
     return fragmentOfFeatures;
-  };
+  }
 
-  var generatePhotoFragment = function (apartment) {
+  function generatePhotoFragment(apartment) {
     var popupElement = document.querySelector('.popup__photos');
     var popupPhoto = document.querySelector('.popup__photo');
 
@@ -40,15 +40,16 @@
 
     var fragmentOfPhotos = document.createDocumentFragment();
 
-    for (var i = 0; i < apartment.offer.photos.length; i++) {
+    apartment.offer.photos.forEach(function (photo, i) {
       imagesList.src = apartment.offer.photos[i];
       var elementPhoto = imagesList.cloneNode(true);
       fragmentOfPhotos.appendChild(elementPhoto);
-    }
-    return fragmentOfPhotos;
-  };
+    });
 
-  var getOfferTypeInRussian = function (type) {
+    return fragmentOfPhotos;
+  }
+
+  function getOfferTypeInRussian(type) {
     if (type === 'palace') {
       return 'Дворец';
     } else if (type === 'flat') {
@@ -57,12 +58,12 @@
       return 'Дом';
     }
     return 'Бунгало';
-  };
+  }
 
   window.data = {
     generatePopupFragment: generatePopupFragment,
     generateFeaturesFragment: generateFeaturesFragment,
-    generatePhotoFragment: generatePhotoFragment
+    generatePhotoFragment: generatePhotoFragment,
   };
 
 })();

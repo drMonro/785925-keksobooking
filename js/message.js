@@ -1,25 +1,22 @@
-// Сообщение в модальном окне
+// Создает сообщение об ошибке или успехе
 'use strict';
 
 (function () {
-  // Создает сообщение об ошибке или успехе
-  function renderStatusMessage(statusTemplate, statusElement) {
-
+  function renderStatusMessage(template, element) {
     var mainContainer = document.querySelector('main');
     var messageFragment = document.createDocumentFragment();
-    var messageBlock = statusTemplate.cloneNode(true);
+    var messageElement = template.cloneNode(true);
 
-    messageFragment.appendChild(messageBlock);
+    messageFragment.appendChild(messageElement);
 
-    var statusBlock = messageFragment.querySelector(statusElement);
+    var statusElement = messageFragment.querySelector(element);
 
-    mainContainer.insertBefore(statusBlock, mainContainer.firstChild);
-    document.querySelector(statusElement).addEventListener('click', closeMessage);
+    mainContainer.insertBefore(statusElement, mainContainer.firstChild);
+    document.querySelector(element).addEventListener('click', closeMessage);
     document.addEventListener('keydown', onEscPress);
     setTimeout(function () {
       mainContainer.firstChild.remove();
     }, 5000);
-
   }
 
   function closeMessage() {

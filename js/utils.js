@@ -29,29 +29,9 @@
     }
   }
 
-  function getFileUrl(file, cb) {
-    var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
-    var fileName = file.name.toLowerCase();
-
-    var matches = FILE_TYPES.some(function (it) {
-      return fileName.endsWith(it);
-    });
-
-    if (matches) {
-      var reader = new FileReader();
-
-      reader.addEventListener('load', function () {
-        cb(reader.result);
-      });
-
-      reader.readAsDataURL(file);
-    }
-  }
-
   window.utils = {
     isEscEvent: isEscEvent,
     isEnterEvent: isEnterEvent,
-    getFileUrl: getFileUrl,
     cleanNode: cleanNode
   };
 })();
