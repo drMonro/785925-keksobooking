@@ -2,25 +2,21 @@
 'use strict';
 
 (function () {
+  var SAVE_URL = 'https://js.dump.academy/keksobooking';
   var RulesRoomsCapacities = {
     '1': ['1'],
     '2': ['1', '2'],
     '3': ['1', '2', '3'],
     '100': ['0'],
   };
-  var SAVE_URL = 'https://js.dump.academy/keksobooking';
   var submitForm = document.querySelector('.ad-form');
   var allFieldset = submitForm.querySelectorAll('fieldset');
-  var mapElement = document.querySelector('.map');
-  var mapFilters = document.querySelector('.map__filters');
   var formReset = submitForm.querySelector('.ad-form__reset');
   var typesAllowEnter = ['submit', 'reset'];
   var successTemplate = document.querySelector('#success').content;
   var successElement = '.success';
   var errorTemplate = document.querySelector('#error').content;
   var errorElement = '.error';
-  var pinsElement = document.querySelector('.map__pins');
-  var mainPin = mapElement.querySelector('.map__pin--main');
   var typeSelect = submitForm.querySelector('[name="type"]');
   var priceInput = submitForm.querySelector('[name="price"]');
   var timeInSelect = submitForm.querySelector('[name="timein"]');
@@ -143,7 +139,7 @@
   // Нажатие на кнопку .form__reset сбрасывает страницу в исходное неактивное состояние:
   formReset.addEventListener('click', function (evt) {
     evt.preventDefault();
-    deactivateForm(submitForm, allFieldset, mapElement, mainPin, mapFilters, pinsElement);
+    deactivateForm(submitForm, allFieldset, window.pin.mapElement, window.map.mainPin, window.pin.filtersForm, window.map.pinsElement);
 
   });
 
@@ -160,7 +156,7 @@
     var formData = new FormData(submitForm);
     window.backend.save(formData, function () {
       window.messages.renderStatusMessage(successTemplate, successElement);
-      deactivateForm(submitForm, allFieldset, mapElement, mainPin, mapFilters, pinsElement);
+      deactivateForm(submitForm, allFieldset, window.pin.mapElement, window.map.mainPin, window.pin.filtersForm, window.map.pinsElement);
     }, function () {
       window.messages.renderStatusMessage(errorTemplate, errorElement);
     }, window.map.TIMEOUT, window.map.STATUS, SAVE_URL);
@@ -182,6 +178,8 @@
   window.form = {
     activateForm: activateForm,
     updateAddress: updateAddress,
+    submitForm: submitForm,
+    allFieldset: allFieldset,
     errorTemplate: errorTemplate,
     errorElement: errorElement,
   };

@@ -2,7 +2,6 @@
 'use strict';
 
 (function () {
-
   var mapElement = document.querySelector('.map');
   var filtersElement = mapElement.querySelector('.map__filters-container');
   var filtersForm = filtersElement.querySelector('.map__filters');
@@ -146,6 +145,9 @@
   window.pin = {
     renderPins: renderPins,
     getMainPinLocation: getMainPinLocation,
+    mapElement: mapElement,
+    filtersElement: filtersElement,
+    filtersForm: filtersForm,
     Filters: Filters,
     setDefaultFilters: setDefaultFilters,
   };

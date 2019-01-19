@@ -6,12 +6,7 @@
   var STATUS = 200;
   var DATA_URL = 'https://js.dump.academy/keksobooking/data';
   var PINS_COUNT = 5;
-  var mapElement = document.querySelector('.map');
-  var mainPin = mapElement.querySelector('.map__pin--main');
-  var filtersElement = mapElement.querySelector('.map__filters-container');
-  var filtersForm = filtersElement.querySelector('.map__filters');
-  var submitForm = document.querySelector('.ad-form');
-  var allFieldset = submitForm.querySelectorAll('fieldset');
+  var mainPin = window.pin.mapElement.querySelector('.map__pin--main');
   var pinsElement = document.querySelector('.map__pins');
 
 
@@ -66,9 +61,9 @@
   // Первое перемещение метки переводит страницу в активное состояние
   mainPin.addEventListener('mousedown', function (evt) {
     evt.preventDefault();
-    var isActive = !(mapElement.classList.contains('map--faded'));
+    var isActive = !(window.pin.mapElement.classList.contains('map--faded'));
     if (!isActive) {
-      activateMap(mapElement, submitForm, allFieldset, filtersForm, TIMEOUT, STATUS, DATA_URL, PINS_COUNT, pinsElement);
+      activateMap(window.pin.mapElement, window.form.submitForm, window.form.allFieldset, window.pin.filtersForm, TIMEOUT, STATUS, DATA_URL, PINS_COUNT, pinsElement);
     }
     var StartCoordinate = {
       x: evt.clientX,
@@ -77,7 +72,7 @@
 
     var CoordinatesLimit = {
       xMinimum: 0,
-      xMaximum: mapElement.offsetWidth - window.constants.MAIN_PIN_WIDTH,
+      xMaximum: window.pin.mapElement.offsetWidth - window.constants.MAIN_PIN_WIDTH,
       yMinimum: 130,
       yMaximum: 630 - window.constants.MAIN_PIN_HEIGHT,
     };
@@ -102,7 +97,7 @@
       mainPin.style.top = pinY + 'px';
 
       window.form.updateAddress(isActive);
-      window.debounce(window.pin.renderPins(PINS_COUNT, mapElement, pinsElement));
+      window.debounce(window.pin.renderPins(PINS_COUNT, window.pin.mapElement, pinsElement));
     }
 
     function onMouseUp(upEvt) {
@@ -116,7 +111,7 @@
   });
 
   // Изменение фильтров
-  filtersForm.addEventListener('change', function (evt) {
+  window.pin.filtersForm.addEventListener('change', function (evt) {
     if (evt.target.name === 'features') {
       window.pin.Filters.features[evt.target.value] = evt.target.checked;
     } else {
@@ -124,12 +119,13 @@
       window.pin.Filters.housing[key] = evt.target.value;
     }
 
-    window.debounce(window.pin.renderPins(PINS_COUNT, mapElement, pinsElement));
+    window.debounce(window.pin.renderPins(PINS_COUNT, window.pin.mapElement, pinsElement));
   });
 
   window.map = {
     deactivateMap: deactivateMap,
     mainPin: mainPin,
+    pinsElement: pinsElement,
     cleanMap: cleanMap,
     TIMEOUT: TIMEOUT,
     STATUS: STATUS,
