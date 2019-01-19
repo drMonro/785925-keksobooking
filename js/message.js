@@ -26,7 +26,7 @@
   }
 
   function onEscPress(evt) {
-    window.utils.isEscEvent(evt, closeMessage);
+    window.utils.isSomeEvent(evt, window.constants.ESC_KEYCODE, closeMessage);
   }
 
   window.messages = {

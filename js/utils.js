@@ -1,16 +1,9 @@
 'use strict';
 
 (function () {
-  function isEscEvent(evt, action) {
-    var ESC_KEYCODE = 27;
-    if (evt.keyCode === ESC_KEYCODE) {
-      action();
-    }
-  }
 
-  function isEnterEvent(evt, action) {
-    var ENTER_KEYCODE = 13;
-    if (evt.keyCode === ENTER_KEYCODE) {
+  function isSomeEvent(evt, codeOfKey, action) {
+    if (evt.keyCode === codeOfKey) {
       action();
     }
   }
@@ -30,8 +23,7 @@
   }
 
   window.utils = {
-    isEscEvent: isEscEvent,
-    isEnterEvent: isEnterEvent,
+    isSomeEvent: isSomeEvent,
     cleanNode: cleanNode
   };
 })();

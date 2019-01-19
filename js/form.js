@@ -19,6 +19,7 @@
   var successElement = '.success';
   var errorTemplate = document.querySelector('#error').content;
   var errorElement = '.error';
+  var pinsElement = document.querySelector('.map__pins');
   var mainPin = mapElement.querySelector('.map__pin--main');
   var typeSelect = submitForm.querySelector('[name="type"]');
   var priceInput = submitForm.querySelector('[name="price"]');
@@ -53,7 +54,7 @@
   }
 
   // Деактивация формы
-  function deactivateForm(form, fields, map, pin, filters) {
+  function deactivateForm(form, fields, map, pin, filters, pins) {
     // Сброс полей формы
     form.reset();
     // Блокировка полей формы
@@ -61,7 +62,7 @@
       field.disabled = true;
     });
 
-    window.map.deactivateMap(map, pin, filters);
+    window.map.deactivateMap(map, pin, filters, pins);
     // Добавляем затемнение формы
     form.classList.add('ad-form--disabled');
     updateAddress(false);
@@ -142,12 +143,12 @@
   // Нажатие на кнопку .form__reset сбрасывает страницу в исходное неактивное состояние:
   formReset.addEventListener('click', function (evt) {
     evt.preventDefault();
-    deactivateForm(submitForm, allFieldset, mapElement, mainPin, mapFilters);
+    deactivateForm(submitForm, allFieldset, mapElement, mainPin, mapFilters, pinsElement);
 
   });
 
   submitForm.addEventListener('keydown', function (evt) {
-    window.utils.isEnterEvent(evt, function () {
+    window.utils.isSomeEvent(evt, window.constants.ENTER_KEYCODE, function () {
       if (typesAllowEnter.indexOf(evt.target.type) === -1) {
         evt.preventDefault();
       }
@@ -159,7 +160,7 @@
     var formData = new FormData(submitForm);
     window.backend.save(formData, function () {
       window.messages.renderStatusMessage(successTemplate, successElement);
-      deactivateForm(submitForm, allFieldset, mapElement, mainPin, mapFilters);
+      deactivateForm(submitForm, allFieldset, mapElement, mainPin, mapFilters, pinsElement);
     }, function () {
       window.messages.renderStatusMessage(errorTemplate, errorElement);
     }, window.map.TIMEOUT, window.map.STATUS, SAVE_URL);

@@ -16,12 +16,12 @@
 
 
   // Переводит карту в активное состояние
-  function activateMap(map, form, fieldset, filters, timeout, status, url, pinsCount) {
+  function activateMap(map, form, fieldset, filters, timeout, status, url, pinsCount, pins) {
     map.classList.remove('map--faded');
     window.form.activateForm(form, fieldset);
     window.backend.load(function (response) {
       window.constants.APARTMENTS = response;
-      window.pin.renderPins(pinsCount);
+      window.pin.renderPins(pinsCount, map, pins);
       activateFilters(filters);
     }, function () {
       window.messages.renderStatusMessage(window.form.errorTemplate, window.form.errorElement);
@@ -29,8 +29,8 @@
   }
 
   // Переводит карту в неактивное состояние
-  function deactivateMap(map, pin, filters) {
-    cleanMap();
+  function deactivateMap(map, pin, filters, pins) {
+    cleanMap(map, pins);
     deactivateFilters(filters);
     window.images.resetImages(window.images.avatarPreview, window.images.AVATAR_DEFAULT_SRC);
 
@@ -41,9 +41,9 @@
   }
 
   // Удаляет элементы из карты
-  function cleanMap() {
-    window.utils.cleanNode(mapElement, '.map__card');
-    window.utils.cleanNode(pinsElement, '.map__pin:not(.map__pin--main)');
+  function cleanMap(map, pins) {
+    window.utils.cleanNode(map, '.map__card');
+    window.utils.cleanNode(pins, '.map__pin:not(.map__pin--main)');
   }
 
   // Блокировка фильтров
@@ -68,41 +68,41 @@
     evt.preventDefault();
     var isActive = !(mapElement.classList.contains('map--faded'));
     if (!isActive) {
-      activateMap(mapElement, submitForm, allFieldset, filtersForm, TIMEOUT, STATUS, DATA_URL, PINS_COUNT);
+      activateMap(mapElement, submitForm, allFieldset, filtersForm, TIMEOUT, STATUS, DATA_URL, PINS_COUNT, pinsElement);
     }
     var StartCoordinate = {
-      X: evt.clientX,
-      Y: evt.clientY,
+      x: evt.clientX,
+      y: evt.clientY,
     };
 
     var CoordinatesLimit = {
-      MIN_X: 0,
-      MAX_X: mapElement.offsetWidth - 62,
-      MIN_Y: 130,
-      MAX_Y: 630,
+      xMinimum: 0,
+      xMaximum: mapElement.offsetWidth - window.constants.MAIN_PIN_WIDTH,
+      yMinimum: 130,
+      yMaximum: 630 - window.constants.MAIN_PIN_HEIGHT,
     };
 
     function onMouseMove(moveEvt) {
       moveEvt.preventDefault();
 
       var CoordinatesShift = {
-        X: StartCoordinate.X - moveEvt.clientX,
-        Y: StartCoordinate.Y - moveEvt.clientY,
+        x: StartCoordinate.x - moveEvt.clientX,
+        y: StartCoordinate.y - moveEvt.clientY,
       };
 
       StartCoordinate = {
-        X: moveEvt.clientX,
-        Y: moveEvt.clientY,
+        x: moveEvt.clientX,
+        y: moveEvt.clientY,
       };
 
-      var pinX = Math.min(Math.max((mainPin.offsetLeft - CoordinatesShift.X), CoordinatesLimit.MIN_X), CoordinatesLimit.MAX_X);
-      var pinY = Math.min(Math.max((mainPin.offsetTop - CoordinatesShift.Y), CoordinatesLimit.MIN_Y), CoordinatesLimit.MAX_Y);
+      var pinX = Math.min(Math.max((mainPin.offsetLeft - CoordinatesShift.x), CoordinatesLimit.xMinimum), CoordinatesLimit.xMaximum);
+      var pinY = Math.min(Math.max((mainPin.offsetTop - CoordinatesShift.y), CoordinatesLimit.yMinimum), CoordinatesLimit.yMaximum);
 
       mainPin.style.left = pinX + 'px';
       mainPin.style.top = pinY + 'px';
 
       window.form.updateAddress(isActive);
-      window.debounce(window.pin.renderPins(PINS_COUNT));
+      window.debounce(window.pin.renderPins(PINS_COUNT, mapElement, pinsElement));
     }
 
     function onMouseUp(upEvt) {
@@ -124,7 +124,7 @@
       window.pin.Filters.housing[key] = evt.target.value;
     }
 
-    window.debounce(window.pin.renderPins(PINS_COUNT));
+    window.debounce(window.pin.renderPins(PINS_COUNT, mapElement, pinsElement));
   });
 
   window.map = {
