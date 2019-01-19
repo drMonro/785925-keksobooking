@@ -3,7 +3,7 @@
 
 (function () {
   // Создает объявление по шаблону и вставляет в DOM
-  function renderCard(cardData) {
+  function renderCard(cardData, map) {
     // Удаляем открытую карточку
     var existingCard = document.querySelector('.map__card');
     if (existingCard) {
@@ -11,10 +11,9 @@
     }
 
     var fragmentPopup = document.createDocumentFragment();
-    var mapTemplate = document.querySelector('.map');
 
     fragmentPopup.appendChild(window.data.generatePopupFragment(cardData));
-    mapTemplate.appendChild(fragmentPopup);
+    map.appendChild(fragmentPopup);
 
     var popupFeaturesElement = document.querySelector('.popup__features');
     popupFeaturesElement.appendChild(window.data.generateFeaturesFragment(cardData));

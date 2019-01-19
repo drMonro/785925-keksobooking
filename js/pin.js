@@ -25,9 +25,9 @@
 
 
   // Отрисовывает метки на карте
-  function renderPins(pinsCount) {
+  function renderPins(pinsCount, map, pins) {
 
-    window.map.cleanMap();
+    window.map.cleanMap(map, pins);
     var fragmentPin = document.createDocumentFragment();
     var similarPinElement = document.querySelector('.map__pins');
 
@@ -37,7 +37,7 @@
     var num = Math.min(filteredApartments.length, pinsCount);
 
     for (var i = 0; i < num; i++) {
-      fragmentPin.appendChild(generatePinImage(filteredApartments[i]));
+      fragmentPin.appendChild(generatePinImage(filteredApartments[i], map));
     }
     similarPinElement.appendChild(fragmentPin);
   }
@@ -103,7 +103,7 @@
     return {x: locationX, y: locationY};
   }
 
-  function generatePinImage(apartment) {
+  function generatePinImage(apartment, map) {
     var pinTemplate = document.querySelector('#pin').content;
     var pinElement = pinTemplate.querySelector('.map__pin');
     var pin = pinElement.cloneNode(true);
@@ -116,7 +116,7 @@
 
     pin.addEventListener('click', function () {
       if (!pin.classList.contains('map__pin--selected')) {
-        pinClickHandler(pin, apartment);
+        pinClickHandler(pin, apartment, map);
       }
     });
 
@@ -124,11 +124,11 @@
   }
 
   // События по клику на метку
-  function pinClickHandler(selectedPinElement, selectedPinData) {
+  function pinClickHandler(selectedPinElement, selectedPinData, map) {
     // Переключает класс
     toggleSelectedPin(selectedPinElement);
     // Отрисовывает карточку для выбранной метки
-    window.card.renderCard(selectedPinData);
+    window.card.renderCard(selectedPinData, map);
   }
 
   // Добавляет класс --selected выбранной метке
