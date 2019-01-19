@@ -147,7 +147,7 @@
   });
 
   submitForm.addEventListener('keydown', function (evt) {
-    window.utils.isEnterEvent(evt, function () {
+    window.utils.isSomeEvent(evt, window.constants.ENTER_KEYCODE, function () {
       if (typesAllowEnter.indexOf(evt.target.type) === -1) {
         evt.preventDefault();
       }

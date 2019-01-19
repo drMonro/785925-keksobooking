@@ -94,8 +94,8 @@
   }
 
   function getMainPinLocation(isActive) {
-    var pinCorrectionX = isActive ? window.constants.MAIN_PIN_CORRECTION_X : 0;
-    var pinCorrectionY = isActive ? window.constants.MAIN_PIN_CORRECTION_Y : 0;
+    var pinCorrectionX = isActive ? window.constants.MAIN_PIN_WIDTH / 2 : 0;
+    var pinCorrectionY = isActive ? window.constants.MAIN_PIN_HEIGHT : 0;
 
     var locationX = window.map.mainPin.offsetLeft + pinCorrectionX;
     var locationY = window.map.mainPin.offsetTop + pinCorrectionY;

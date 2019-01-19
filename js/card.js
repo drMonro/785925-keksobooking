@@ -34,7 +34,7 @@
   }
 
   function onEscPress(evt) {
-    window.utils.isEscEvent(evt, closeCard);
+    window.utils.isSomeEvent(evt, window.constants.ESC_KEYCODE, closeCard);
   }
 
   window.card = {

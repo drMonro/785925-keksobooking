@@ -77,9 +77,9 @@
 
     var CoordinatesLimit = {
       MIN_X: 0,
-      MAX_X: mapElement.offsetWidth - 62,
+      MAX_X: mapElement.offsetWidth - window.constants.MAIN_PIN_WIDTH,
       MIN_Y: 130,
-      MAX_Y: 630,
+      MAX_Y: 630 - window.constants.MAIN_PIN_HEIGHT,
     };
 
     function onMouseMove(moveEvt) {
