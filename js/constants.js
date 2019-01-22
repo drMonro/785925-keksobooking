@@ -52,7 +52,7 @@
   var ESC_KEYCODE = 27;
   var ENTER_KEYCODE = 13;
 
-  var MAIN_PIN_HEIGHT = 74;
+  var MAIN_PIN_HEIGHT = 82;
   var MAIN_PIN_WIDTH = 62;
   var MAP_WIDTH = 1200;
 

@@ -29,8 +29,8 @@
     deactivateFilters(filters);
     window.images.resetImages(window.images.avatarPreview, window.images.AVATAR_DEFAULT_SRC);
 
-    pin.style.top = '50%';
-    pin.style.left = '50%';
+    pin.style.top = '';
+    pin.style.left = '';
 
     map.classList.add('map--faded');
   }
@@ -73,7 +73,7 @@
     var CoordinatesLimit = {
       xMinimum: 0,
       xMaximum: window.pin.mapElement.offsetWidth - window.constants.MAIN_PIN_WIDTH,
-      yMinimum: 130,
+      yMinimum: 130 - window.constants.MAIN_PIN_WIDTH,
       yMaximum: 630 - window.constants.MAIN_PIN_HEIGHT,
     };
 
