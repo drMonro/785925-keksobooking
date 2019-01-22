@@ -92,9 +92,9 @@
     return 'middle';
   }
 
-  function getMainPinLocation(isActive) {
-    var pinCorrectionX = isActive ? window.constants.MAIN_PIN_WIDTH / 2 : 0;
-    var pinCorrectionY = isActive ? window.constants.MAIN_PIN_HEIGHT : 0;
+  function getMainPinLocation() {
+    var pinCorrectionX = window.constants.MAIN_PIN_WIDTH / 2;
+    var pinCorrectionY = window.constants.MAIN_PIN_HEIGHT;
 
     var locationX = window.map.mainPin.offsetLeft + pinCorrectionX;
     var locationY = window.map.mainPin.offsetTop + pinCorrectionY;

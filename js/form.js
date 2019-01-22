@@ -26,9 +26,9 @@
 
 
   // Заполняем поле адреса после открытия страницы
-  function updateAddress(isActiveMap) {
+  function updateAddress() {
     var addressInput = document.querySelector('[name="address"]');
-    var mainPinLocation = window.pin.getMainPinLocation(isActiveMap);
+    var mainPinLocation = window.pin.getMainPinLocation();
     addressInput.value = mainPinLocation.x + ', ' + mainPinLocation.y;
   }
 
@@ -44,7 +44,7 @@
 
     // Это нужно, чтобы валидация работала правильно,
     // если пользователь не будет изменять эти поля
-    updateAddress(true);
+    updateAddress();
     setMinPrice(typeSelect.value, priceInput);
     checkRoomsCapacity(roomsSelect, capacitySelect, RulesRoomsCapacities);
   }
